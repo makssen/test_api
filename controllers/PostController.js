@@ -4,7 +4,7 @@ const PostService = require('../services/PostService');
 class PostController {
     async create(req, res) {
         try {
-            console.log(req.files)
+            /* console.log(req.files) */
             const post = await PostService.create(req.body);
             res.json(post);
         } catch (error) {
@@ -14,7 +14,23 @@ class PostController {
 
     async getAll(req, res) {
         try {
-            const posts = await PostService.getAll();
+            const { title, author, limit } = req.query;
+            const options = {
+                limit: limit || 0
+            };
+            let posts;
+            if (!title && !author) {
+                posts = await PostService.getAll({}, options);
+            }
+            if (title && !author) {
+                posts = await PostService.getAll({ title }, options);
+            }
+            if (!title && author) {
+                posts = await PostService.getAll({ author }, options);
+            }
+            if (title && author) {
+                posts = await PostService.getAll({ author, title }, options);
+            }
             return res.json(posts);
         } catch (error) {
             res.status(500).json(error);

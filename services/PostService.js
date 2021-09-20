@@ -6,8 +6,8 @@ class PostService {
         return createdPost;
     }
 
-    async getAll() {
-        const posts = await Post.find();
+    async getAll(obj = {}, options) {
+        const posts = await Post.find(obj).limit(Number(options.limit)).exec();
         return posts;
     }
 
