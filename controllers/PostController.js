@@ -1,4 +1,3 @@
-const Post = require('../models/Post');
 const PostService = require('../services/PostService');
 
 class PostController {

@@ -1,5 +1,6 @@
 const Router = require('express');
 const PostController = require('./controllers/PostController');
+const UserController = require('./controllers/UserController');
 
 const router = new Router();
 
@@ -8,6 +9,8 @@ router.get('/posts', PostController.getAll);
 router.get('/posts/:id', PostController.getById);
 router.put('/posts', PostController.update);
 router.delete('/posts/:id', PostController.delete);
+
+router.post('/users', UserController.create);
 
 
 module.exports = router;
