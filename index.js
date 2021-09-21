@@ -3,7 +3,7 @@ require('dotenv').config()
 const mongoose = require('mongoose');
 const fileUpload = require('express-fileupload');
 const postRouter = require('./routes/postRouter');
-const userRouter = require('./routes/userRouter');
+const authRouter = require('./routes/authRouter');
 
 
 const PORT = process.env.PORT;
@@ -21,8 +21,8 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static('static'));
 app.use(fileUpload({}));
+app.use('/auth', authRouter);
 app.use('/api', postRouter);
-app.use('/api', userRouter);
 
 const startApp = async() => {
     try {
