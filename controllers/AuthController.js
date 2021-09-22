@@ -3,14 +3,15 @@ const User = require("../models/User");
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config');
+const jwt_decode = require('jwt-decode');
 
-const generateAccessToken = (id, roles) => {
+const generateAccessToken = (id, email, roles) => {
     const payload = {
         id,
+        email,
         roles
     }
-    return jwt.sign(payload, secret, { expiresIn: '24h' });
+    return jwt.sign(payload, process.env.SECRET, { expiresIn: '24h' });
 }
 
 class AuthController {
@@ -34,7 +35,9 @@ class AuthController {
             const user = new User({ nick, email, password: hashPassword, roles: userRole.value });
 
             await user.save();
-            return res.json({ message: 'User success signup' });
+
+            const token = generateAccessToken(user._id, user.email, user.roles);
+            return res.json({ token, data: jwt_decode(token) });
         } catch (error) {
             console.log(error);
             res.status(400).json({ message: 'Signup error' });
@@ -43,6 +46,7 @@ class AuthController {
 
     async login(req, res) {
         try {
+            console.log(process.env.SECRET);
             const { email, password } = req.body;
             const user = await User.findOne({ email });
             if (!user) {
@@ -55,8 +59,8 @@ class AuthController {
                 return res.status(400).json({ message: 'Invalid password' });
             }
 
-            const token = generateAccessToken(user._id, user.roles);
-            return res.json({ token });
+            const token = generateAccessToken(user._id, user.email, user.roles);
+            return res.json({ token, data: jwt_decode(token) });
         } catch (error) {
             console.log(error);
             res.status(400).json({ message: 'Login error' });

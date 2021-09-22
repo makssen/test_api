@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config');
 
 module.exports = (req, res, next) => {
     if (req.method === 'OPTIONS') {
@@ -12,7 +11,7 @@ module.exports = (req, res, next) => {
             return res.status(403).json({ message: 'User is not logged in' });
         }
 
-        const decodedData = jwt.verify(token, secret);
+        const decodedData = jwt.verify(token, process.env.SECRET);
         req.user = decodedData;
         next();
     } catch (error) {

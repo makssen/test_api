@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config');
 
 module.exports = (roles) => {
     return (req, res, next) => {
@@ -13,7 +12,7 @@ module.exports = (roles) => {
                 return res.status(403).json({ message: 'User is not logged in' });
             }
 
-            const { roles: userRoles } = jwt.verify(token, secret);
+            const { roles: userRoles } = jwt.verify(token, process.env.SECRET);
             let isRole = false;
 
             userRoles.forEach(item => {
