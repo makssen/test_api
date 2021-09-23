@@ -2,8 +2,11 @@ const Post = require("../models/Post");
 const FileService = require("./FileService");
 
 class PostService {
-    async create(post, image) {
-        const filename = FileService.saveFile(image);
+    async create(post) {
+        if (!post.author || !post.text || !post.title) {
+            throw new Error('Request body with empty fields');
+        }
+        const filename = await FileService.saveFile(post.image);
         const createdPost = await Post.create({...post, image: filename });
         return createdPost;
     }
